@@ -14,17 +14,19 @@ O sistema integra modelagem conceitual, integridade referencial complexa por mei
 
 ```mermaid
 flowchart TD
-    subgraph "Camada de Interface (Python CLI)"
-        CLI[texttosql.py] <-->|Opções 1-10: SQL Puro| DB[(PostgreSQL)]
-        CLI <-->|Opção 11: Linguagem Natural| LC[LangChain Community]
+    subgraph "Camada de Interface & Dados"
+        CLI[texttosql.py] <-->|1. Consultas 1-10: SQL Puro| DB[(PostgreSQL)]
+        CLI <-->|4. Executa SQL Gerado pela IA| DB
     end
     
-    subgraph "Camada de Inteligência Artificial"
+    subgraph "Camada de Inteligência Artificial (NLP2SQL)"
+        CLI -->|2. Pergunta em Linguagem Natural| LC[LangChain Community]
         LC <-->|Prompt + Schema| OLL[Ollama Engine]
         OLL <-->|Inferência Local| QW[qwen2.5-coder:1.5b]
+        LC -->|3. Retorna SQL Traduzido| CLI
     end
     
-    subgraph "Camada de Dados (PostgreSQL)"
+    subgraph "Camada de Persistência (PostgreSQL)"
         DB <-->|Triggers e Restrições| Engine[PostgreSQL Engine]
         Engine --- DDL[05.DDL.sql - Esquema & Triggers]
         Engine --- DML[06.DML.sql - Carga Completa unificada com Histórico ESPN]
