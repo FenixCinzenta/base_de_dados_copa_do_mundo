@@ -18,16 +18,15 @@ a base de dados 'album_copa':
 
 $ createdb -h localhost -U postgres album_copa
 
-Em seguida, aplique os arquivos de esquema (DDL) e inserções de dados (DML):
+Em seguida, aplique os arquivos de esquema (DDL) e de dados (DML):
 
 # 1. Criação das tabelas, restrições de integridade e triggers (T1 a T5):
 $ psql -h localhost -U postgres -d album_copa -f 05.DDL.sql
 
-# 2. Carga inicial de dados gerais (Seleções, Estádios, Edições, etc.):
+# 2. Carga completa dos dados do banco (Contém dados de referência, agendamento de 2026 e históricos da ESPN de 2018/2022 unificados):
 $ psql -h localhost -U postgres -d album_copa -f 06.DML.sql
 
-# 3. Carga complementar de dados históricos reais das Copas de 2018 e 2022:
-$ psql -h localhost -U postgres -d album_copa -f wc_past_seed.sql
+Nota: O arquivo 'wc_past_seed.sql' e o script 'seed_wc_past.py' estão incluídos no repositório para documentar o processo de extração de dados históricos via API pública da ESPN, mas a sua execução individual não é necessária, pois todos os dados gerados já estão perfeitamente consolidados no '06.DML.sql'.
 
 -----------------------------------------------------------------------------
 3. CONFIGURAÇÃO DO PROTÓTIPO CLI E NLP2SQL

@@ -27,8 +27,7 @@ flowchart TD
     subgraph "Camada de Dados (PostgreSQL)"
         DB <-->|Triggers e Restrições| Engine[PostgreSQL Engine]
         Engine --- DDL[05.DDL.sql - Esquema & Triggers]
-        Engine --- DML[06.DML.sql - Carga Inicial]
-        Engine --- SEED[wc_past_seed.sql - Dados ESPN]
+        Engine --- DML[06.DML.sql - Carga Completa unificada com Histórico ESPN]
     end
 ```
 
@@ -41,12 +40,12 @@ O repositório está organizado de forma limpa e estruturada, contendo os seguin
 | Nome do Arquivo | Função no Sistema |
 | :--- | :--- |
 | **[`05.DDL.sql`](file:///home/nexus/BD/05.DDL.sql)** | Definição de tabelas (DDL), chaves primárias/estrangeiras, restrições e triggers (T1 a T5). |
-| **[`06.DML.sql`](file:///home/nexus/BD/06.DML.sql)** | Carga inicial de dados de referência (paises, edições de copa, seleções participantes, estádios padrão). |
-| **[`wc_past_seed.sql`](file:///home/nexus/BD/wc_past_seed.sql)** | Carga de dados históricos reais das Copas de 2018 e 2022 (partidas, eventos, convocados). |
-| **[`seed_wc_past.py`](file:///home/nexus/BD/seed_wc_past.py)** | Script automatizado para consumo da **API Pública da ESPN** e geração dinâmica do arquivo `wc_past_seed.sql`. |
+| **[`06.DML.sql`](file:///home/nexus/BD/06.DML.sql)** | Carga completa unificada de dados (parâmetros de referência, edições, 2026 planejado, e dados reais de 2018/2022). |
+| **[`wc_past_seed.sql`](file:///home/nexus/BD/wc_past_seed.sql)** | Dados históricos brutos das Copas de 2018 e 2022 extraídos para compor a carga DML (mantido como referência). |
+| **[`seed_wc_past.py`](file:///home/nexus/BD/seed_wc_past.py)** | Script de integração automatizado que consome a **API Pública da ESPN** para gerar o histórico de partidas e elencos. |
 | **[`texttosql.py`](file:///home/nexus/BD/texttosql.py)** | Script principal do protótipo CLI interativo com visualização tabular de consultas e NLP2SQL. |
 | **[`requirements_prototipo.txt`](file:///home/nexus/BD/requirements_prototipo.txt)** | Lista de dependências Python necessárias para execução do protótipo CLI. |
-| **[`08.Instrucoes.txt`](file:///home/nexus/BD/08.Instrucoes.txt)** | Manual resumido de instalação, inicialização e operação do sistema. |
+| **[`08.Instrucoes.txt`](file:///home/nexus/BD/08.Instrucoes.txt)** | Manual de instalação, inicialização e operação do sistema de forma simplificada em 2 passos. |
 
 ---
 
@@ -124,10 +123,9 @@ Uma funcionalidade avançada que traduz perguntas diretas em linguagem comum par
    ```bash
    psql -h localhost -U postgres -d album_copa -f 05.DDL.sql
    ```
-3. Carregue os dados de referência e históricos da ESPN:
+3. Carregue a carga completa de dados unificada:
    ```bash
    psql -h localhost -U postgres -d album_copa -f 06.DML.sql
-   psql -h localhost -U postgres -d album_copa -f wc_past_seed.sql
    ```
 
 ### Passo 2: Configurar o Motor de IA Local
