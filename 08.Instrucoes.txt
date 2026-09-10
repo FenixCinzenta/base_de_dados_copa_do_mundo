@@ -1,0 +1,61 @@
+=============================================================================
+SCC0640 - Bases de Dados (USP/ICMC) - Projeto de Curso
+08.Instrucoes.txt -- Instruções de Instalação e Execução
+=============================================================================
+
+-----------------------------------------------------------------------------
+1. REQUISITOS DO SISTEMA
+-----------------------------------------------------------------------------
+- SGBD: PostgreSQL (v14 ou superior) com a extensão 'unaccent' habilitada.
+- Linguagem: Python (v3.10 ou superior) com virtualenv configurado.
+- Dependências da IA: Ollama (instalado localmente) para tradução NLP2SQL.
+
+-----------------------------------------------------------------------------
+2. CONFIGURAÇÃO DA BASE DE DADOS (POSTGRESQL)
+-----------------------------------------------------------------------------
+Antes de iniciar, certifique-se de que o servidor PostgreSQL está ativo e crie
+a base de dados 'album_copa':
+
+$ createdb -h localhost -U postgres album_copa
+
+Em seguida, aplique os arquivos de esquema (DDL) e de dados (DML):
+
+# 1. Criação das tabelas, restrições de integridade e triggers (T1 a T5):
+$ psql -h localhost -U postgres -d album_copa -f 05.DDL.sql
+
+# 2. Carga completa dos dados do banco (Contém dados de referência, agendamento de 2026 e históricos da ESPN de 2018/2022 unificados):
+$ psql -h localhost -U postgres -d album_copa -f 06.DML.sql
+
+Nota: O arquivo 'wc_past_seed.sql' e o script 'seed_wc_past.py' estão incluídos no repositório para documentar o processo de extração de dados históricos via API pública da ESPN, mas a sua execução individual não é necessária, pois todos os dados gerados já estão perfeitamente consolidados no '06.DML.sql'.
+
+-----------------------------------------------------------------------------
+3. CONFIGURAÇÃO DO PROTÓTIPO CLI E NLP2SQL
+-----------------------------------------------------------------------------
+O protótipo CLI interativo conecta-se a um modelo local de Inteligência
+Artificial no Ollama para traduzir consultas de Linguagem Natural em SQL.
+
+# 1. Baixe o modelo Qwen 2.5 Coder (1.5B) de codificação altamente leve no Ollama:
+$ ollama pull qwen2.5-coder:1.5b
+
+# 2. Ative o ambiente virtual Python com as dependências instaladas:
+$ source venv_prototipo/bin/activate
+
+# 3. Execute o script do protótipo:
+$ python3 texttosql.py
+
+-----------------------------------------------------------------------------
+4. OPERAÇÃO DO PROTÓTIPO
+-----------------------------------------------------------------------------
+Ao iniciar, o programa solicitará as credenciais do banco de dados:
+- Host da base de dados (default: localhost): [Pressione Enter]
+- Nome da base de dados (default: album_copa): [Pressione Enter]
+- Usuario (default: postgres): [Pressione Enter]
+- Senha: [Digite a senha do PostgreSQL]
+
+Menu de Opções:
+- Digite opções de 1 a 10 para rodar as consultas pré-definidas (com parâmetros).
+- Digite 11 para rodar a consulta livre em linguagem natural. A IA traduzirá
+  sua pergunta diretamente para SQL, o executará no banco e retornará a tabela
+  de dados formatada estruturalmente.
+- Digite 0 para encerrar o programa.
+=============================================================================
